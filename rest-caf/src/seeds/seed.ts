@@ -30,6 +30,17 @@ import {
   OrderStatus,
   PaymentStatus,
 } from '../orders/schemas/order.schema';
+import {
+  Payment,
+  PaymentDocument,
+  PaymentMethod,
+  PaymentStatus as PayStatus,
+} from '../payments/schemas/payment.schema';
+import {
+  KitchenTicket,
+  KitchenTicketDocument,
+  KitchenTicketStatus,
+} from '../kitchen-tickets/schemas/kitchen-ticket.schema';
 
 async function run() {
   const appContext = await NestFactory.createApplicationContext(AppModule, {
@@ -59,6 +70,12 @@ async function run() {
   );
   const orderModel = appContext.get<Model<OrderDocument>>(
     getModelToken(Order.name),
+  );
+  const paymentModel = appContext.get<Model<PaymentDocument>>(
+    getModelToken(Payment.name),
+  );
+  const ticketModel = appContext.get<Model<KitchenTicketDocument>>(
+    getModelToken(KitchenTicket.name),
   );
 
   const branchesSeed: Array<Omit<Branch, '_id' | 'createdAt' | 'updatedAt'>> = [
@@ -435,6 +452,49 @@ async function run() {
       },
       { upsert: true, setDefaultsOnInsert: true },
     );
+
+    // Crear/actualizar ticket de cocina para la orden 1001
+    const orderDocCentro = await orderModel
+      .findOne({ orderNumber: 1001, branchId })
+      .lean();
+    if (!orderDocCentro)
+      throw new Error('Order not found for kitchen ticket: 1001');
+
+    const ticketItemsCentro = items.map((it) => ({
+      name: it.name as string,
+      quantity: it.quantity as number,
+      notes: 'Preparar rápido',
+    }));
+
+    await ticketModel.updateOne(
+      { orderId: orderDocCentro._id as Types.ObjectId, branchId },
+      {
+        $set: {
+          orderId: orderDocCentro._id as Types.ObjectId,
+          items: ticketItemsCentro,
+          status: KitchenTicketStatus.PENDING,
+          priority: 1,
+          branchId,
+        },
+      },
+      { upsert: true, setDefaultsOnInsert: true },
+    );
+
+    // Crear/actualizar pago para la orden 1001 (efectivo, pagado)
+    await paymentModel.updateOne(
+      { orderId: orderDocCentro._id as Types.ObjectId, branchId },
+      {
+        $set: {
+          orderId: orderDocCentro._id as Types.ObjectId,
+          method: PaymentMethod.CASH,
+          amount: totals.total,
+          status: PayStatus.PAID,
+          paidAt: new Date(),
+          branchId,
+        },
+      },
+      { upsert: true, setDefaultsOnInsert: true },
+    );
   }
 
   // Orden TAKE_AWAY en Sucursal Norte
@@ -493,6 +553,49 @@ async function run() {
           tax: totals.tax,
           total: totals.total,
           createdBy,
+          branchId,
+        },
+      },
+      { upsert: true, setDefaultsOnInsert: true },
+    );
+
+    // Crear/actualizar ticket de cocina para la orden 1002
+    const orderDocNorte = await orderModel
+      .findOne({ orderNumber: 1002, branchId })
+      .lean();
+    if (!orderDocNorte)
+      throw new Error('Order not found for kitchen ticket: 1002');
+
+    const ticketItemsNorte = items.map((it) => ({
+      name: it.name as string,
+      quantity: it.quantity as number,
+      notes: 'Para llevar',
+    }));
+
+    await ticketModel.updateOne(
+      { orderId: orderDocNorte._id as Types.ObjectId, branchId },
+      {
+        $set: {
+          orderId: orderDocNorte._id as Types.ObjectId,
+          items: ticketItemsNorte,
+          status: KitchenTicketStatus.IN_PROGRESS,
+          priority: 2,
+          branchId,
+        },
+      },
+      { upsert: true, setDefaultsOnInsert: true },
+    );
+
+    // Crear/actualizar pago para la orden 1002 (tarjeta, pendiente)
+    await paymentModel.updateOne(
+      { orderId: orderDocNorte._id as Types.ObjectId, branchId },
+      {
+        $set: {
+          orderId: orderDocNorte._id as Types.ObjectId,
+          method: PaymentMethod.CARD,
+          amount: totals.total,
+          status: PayStatus.PENDING,
+          paidAt: null,
           branchId,
         },
       },

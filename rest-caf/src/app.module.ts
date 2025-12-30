@@ -11,6 +11,8 @@ import { ProductVariantsModule } from './product-variants/product-variants.modul
 import { ProductExtrasModule } from './product-extras/product-extras.module';
 import { TablesModule } from './tables/tables.module';
 import { OrdersModule } from './orders/orders.module';
+import { KitchenTicketsModule } from './kitchen-tickets/kitchen-tickets.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { OrdersModule } from './orders/orders.module';
     ProductExtrasModule,
     TablesModule,
     OrdersModule,
+    KitchenTicketsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
