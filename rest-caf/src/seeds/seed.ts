@@ -41,6 +41,11 @@ import {
   KitchenTicketDocument,
   KitchenTicketStatus,
 } from '../kitchen-tickets/schemas/kitchen-ticket.schema';
+import {
+  Customer,
+  CustomerDocument,
+  CustomerType,
+} from '../customers/schemas/customer.schema';
 
 async function run() {
   const appContext = await NestFactory.createApplicationContext(AppModule, {
@@ -77,6 +82,9 @@ async function run() {
   const ticketModel = appContext.get<Model<KitchenTicketDocument>>(
     getModelToken(KitchenTicket.name),
   );
+  const customerModel = appContext.get<Model<CustomerDocument>>(
+    getModelToken(Customer.name),
+  );
 
   const branchesSeed: Array<Omit<Branch, '_id' | 'createdAt' | 'updatedAt'>> = [
     {
@@ -102,6 +110,77 @@ async function run() {
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );
     branchIdByName.set(b.name, doc._id as Types.ObjectId);
+  }
+
+  // Seed de clientes por sucursal
+  const customersSeed: Array<{
+    type: CustomerType;
+    name: string;
+    lastName: string;
+    documentId: string;
+    email?: string | null;
+    phone?: string | null;
+    active: boolean;
+    notes?: string | null;
+    branchName: string;
+  }> = [
+    {
+      type: CustomerType.INDIVIDUAL,
+      name: 'Carlos',
+      lastName: 'Ramírez',
+      documentId: 'DNI-87654321',
+      email: 'carlos.ramirez@example.com',
+      phone: '+52 55 1111 2222',
+      active: true,
+      notes: 'Cliente frecuente',
+      branchName: 'Sucursal Centro',
+    },
+    {
+      type: CustomerType.COMPANY,
+      name: 'Acme',
+      lastName: 'Corp',
+      documentId: 'RUC-20123456789',
+      email: 'contacto@acmecorp.com',
+      phone: '+52 55 3333 4444',
+      active: true,
+      notes: 'Facturación mensual',
+      branchName: 'Sucursal Centro',
+    },
+    {
+      type: CustomerType.INDIVIDUAL,
+      name: 'María',
+      lastName: 'López',
+      documentId: 'DNI-11223344',
+      email: null,
+      phone: '+52 55 5555 6666',
+      active: true,
+      notes: 'Prefiere pedidos para llevar',
+      branchName: 'Sucursal Norte',
+    },
+  ];
+
+  for (const c of customersSeed) {
+    const branchId = branchIdByName.get(c.branchName);
+    if (!branchId)
+      throw new Error(`Branch not found for customer seed: ${c.branchName}`);
+
+    await customerModel.updateOne(
+      { documentId: c.documentId, branchId },
+      {
+        $set: {
+          type: c.type,
+          name: c.name,
+          lastName: c.lastName,
+          documentId: c.documentId,
+          email: c.email ?? null,
+          phone: c.phone ?? null,
+          active: c.active,
+          notes: c.notes ?? null,
+          branchId,
+        },
+      },
+      { upsert: true, setDefaultsOnInsert: true },
+    );
   }
 
   // Seed de categorías por sucursal

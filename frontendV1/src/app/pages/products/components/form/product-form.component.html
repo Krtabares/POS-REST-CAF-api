@@ -1,0 +1,44 @@
+<div class="flex flex-col gap-6">
+    <div>
+        <label for="name" class="block font-bold mb-3">Name</label>
+        <input type="text" pInputText id="name" [(ngModel)]="form.name" required autofocus fluid />
+    </div>
+    <div>
+        <label for="description" class="block font-bold mb-3">Description</label>
+        <textarea id="description" pTextarea [(ngModel)]="form.description" rows="3" cols="20" fluid></textarea>
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <label for="basePrice" class="block font-bold mb-3">Base Price</label>
+            <p-inputnumber id="basePrice" [(ngModel)]="form.basePrice" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" fluid />
+        </div>
+        <div class="col-span-6">
+            <label for="active" class="block font-bold mb-3">Active</label>
+            <p-checkbox inputId="active" [(ngModel)]="form.active" binary="true" label="Active" />
+        </div>
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <label for="categoryId" class="block font-bold mb-3">Category</label>
+            <select id="categoryId" [(ngModel)]="form.categoryId" class="p-inputtext p-component" style="width: 100%">
+                <option [ngValue]="''" disabled>Select a category</option>
+                <option *ngFor="let c of categories" [ngValue]="c._id">{{ c.name }}</option>
+            </select>
+        </div>
+        <div class="col-span-6">
+            <label for="branchId" class="block font-bold mb-3">Branch</label>
+            <select id="branchId" [(ngModel)]="form.branchId" class="p-inputtext p-component" style="width: 100%">
+                <option [ngValue]="''" disabled>Select a branch</option>
+                <option *ngFor="let b of branches" [ngValue]="b._id">{{ b.name }}</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <p-checkbox inputId="hasVariants" [(ngModel)]="form.hasVariants" binary="true" label="Has Variants" />
+        </div>
+        <div class="col-span-6">
+            <p-checkbox inputId="hasExtras" [(ngModel)]="form.hasExtras" binary="true" label="Has Extras" />
+        </div>
+    </div>
+</div>

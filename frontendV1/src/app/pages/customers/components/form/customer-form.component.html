@@ -1,0 +1,55 @@
+<div class="flex flex-col gap-6">
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-6">
+      <label for="name" class="block font-bold mb-3">Name</label>
+      <input type="text" pInputText id="name" [(ngModel)]="form.name" required autofocus fluid />
+    </div>
+    <div class="col-span-6">
+      <label for="lastName" class="block font-bold mb-3">Last Name</label>
+      <input type="text" pInputText id="lastName" [(ngModel)]="form.lastName" required fluid />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-6">
+      <label for="type" class="block font-bold mb-3">Type</label>
+      <select id="type" [(ngModel)]="form.type" class="p-inputtext p-component" style="width: 100%">
+        <option *ngFor="let t of types" [ngValue]="t">{{ t }}</option>
+      </select>
+    </div>
+    <div class="col-span-6">
+      <label for="documentId" class="block font-bold mb-3">Document ID</label>
+      <input type="text" pInputText id="documentId" [(ngModel)]="form.documentId" required fluid />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-6">
+      <label for="email" class="block font-bold mb-3">Email</label>
+      <input type="text" pInputText id="email" [(ngModel)]="form.email" fluid />
+    </div>
+    <div class="col-span-6">
+      <label for="phone" class="block font-bold mb-3">Phone</label>
+      <input type="text" pInputText id="phone" [(ngModel)]="form.phone" fluid />
+    </div>
+  </div>
+
+  <div>
+    <label for="notes" class="block font-bold mb-3">Notes</label>
+    <textarea id="notes" pTextarea [(ngModel)]="form.notes" rows="3" cols="20" fluid></textarea>
+  </div>
+
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-6">
+      <label for="branchId" class="block font-bold mb-3">Branch</label>
+      <select id="branchId" [(ngModel)]="form.branchId" class="p-inputtext p-component" style="width: 100%">
+        <option [ngValue]="''" disabled>Select a branch</option>
+        <option *ngFor="let b of branches" [ngValue]="b._id">{{ b.name }}</option>
+      </select>
+    </div>
+    <div class="col-span-6">
+      <label for="active" class="block font-bold mb-3">Active</label>
+      <p-checkbox inputId="active" [(ngModel)]="form.active" binary="true" label="Active" />
+    </div>
+  </div>
+</div>

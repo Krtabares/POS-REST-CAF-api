@@ -1,0 +1,32 @@
+<div class="flex flex-col gap-3">
+    <p-toast></p-toast>
+    <div class="text-sm font-semibold">
+        TOTAL: <span class="text-orange-500 text-xl">S/ {{ total | number: '1.2-2' }}</span>
+    </div>
+
+    <div>
+        <label class="block mb-2">Efectivo Recibido</label>
+        <p-inputnumber [(ngModel)]="received" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0.01" fluid></p-inputnumber>
+        <small *ngIf="total <= 0 || received <= 0" class="text-red-500">El monto debe ser mayor que cero.</small>
+        <div class="flex gap-2 mt-2">
+            <p-button label="S/ 80.00" (onClick)="setQuickAmount(80)"></p-button>
+            <p-button label="S/ 100.00" (onClick)="setQuickAmount(100)"></p-button>
+            <p-button label="Monto Exacto" (onClick)="exactAmount()"></p-button>
+        </div>
+    </div>
+
+    <div class="font-semibold">
+        CAMBIO: <span class="text-xl">S/ {{ change() | number: '1.2-2' }}</span>
+    </div>
+
+    <div class="flex items-center gap-3">
+        <p-button label="Imprimir Recibo" icon="pi pi-print" [text]="true"></p-button>
+        <p-checkbox [(ngModel)]="emailReceipt" binary="true" inputId="emailReceipt" label="Enviar Recibo por Email"></p-checkbox>
+    </div>
+
+    <p-button label="FINALIZAR VENTA" class="w-full" severity="warn" [disabled]="total <= 0 || received <= 0" (onClick)="finalizeSale()"></p-button>
+
+    <div class="flex items-center gap-3 mt-2">
+        <p-button label="Cancelar / Volver" [text]="true" (onClick)="cancelSale()"></p-button>
+    </div>
+</div>

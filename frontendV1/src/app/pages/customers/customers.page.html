@@ -1,0 +1,23 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelected()" [disabled]="!selected || !selected.length" />
+    </ng-template>
+    <ng-template #end>
+        <p-button label="Reload" icon="pi pi-refresh" severity="secondary" (onClick)="load()" />
+    </ng-template>
+</p-toolbar>
+
+<app-customers-table [customers]="customers()" [(selection)]="selected" (editItem)="edit($event)" (deleteItem)="deleteOne($event)"></app-customers-table>
+
+<p-dialog [(visible)]="dialog" [style]="{ width: '560px' }" header="Customer" [modal]="true">
+    <ng-template #content>
+        <app-customer-form [form]="form" [branches]="branches" [types]="types" />
+    </ng-template>
+    <ng-template #footer>
+        <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Save" icon="pi pi-check" (click)="save()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

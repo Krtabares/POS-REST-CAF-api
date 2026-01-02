@@ -1,0 +1,38 @@
+<div class="flex flex-col gap-3">
+    <div>
+        <label class="block mb-2">Order</label>
+        <select class="p-inputtext w-full" [(ngModel)]="form.orderId">
+            <option [ngValue]="''">-- Select Order --</option>
+            <option *ngFor="let o of orders" [ngValue]="o._id">#{{ o.orderNumber }}</option>
+        </select>
+    </div>
+    <div>
+        <label class="block mb-2">Method</label>
+        <select class="p-inputtext w-full" [(ngModel)]="form.method">
+            <option *ngFor="let m of methods" [ngValue]="m.value">{{ m.label }}</option>
+        </select>
+    </div>
+    <div>
+        <label class="block mb-2">Amount</label>
+        <p-inputnumber [(ngModel)]="form.amount" mode="currency" currency="PEN" locale="es-PE"></p-inputnumber>
+    </div>
+    <div>
+        <label class="block mb-2">Status</label>
+        <select class="p-inputtext w-full" [(ngModel)]="form.status">
+            <option [ngValue]="'PENDING'">PENDING</option>
+            <option [ngValue]="'PAID'">PAID</option>
+            <option [ngValue]="'FAILED'">FAILED</option>
+        </select>
+    </div>
+    <div>
+        <label class="block mb-2">Paid At</label>
+        <input class="p-inputtext w-full" type="datetime-local" [(ngModel)]="form.paidAt" />
+    </div>
+    <div>
+        <label class="block mb-2">Branch</label>
+        <select class="p-inputtext w-full" [(ngModel)]="form.branchId">
+            <option [ngValue]="''">-- Select Branch --</option>
+            <option *ngFor="let b of branches" [ngValue]="b._id">{{ b.name }}</option>
+        </select>
+    </div>
+</div>
