@@ -23,7 +23,7 @@ export class CreatePaymentDto {
 
   @ApiProperty({ example: 123.45 })
   @IsNumber()
-  @Min(0)
+  @Min(0.01)
   amount: number;
 
   @ApiProperty({ enum: PaymentStatus, default: PaymentStatus.PENDING })

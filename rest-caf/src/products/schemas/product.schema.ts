@@ -36,3 +36,22 @@ export class Product {
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
+
+// Virtuals to allow populating related collections
+ProductSchema.virtual('extras', {
+  ref: 'ProductExtra',
+  localField: '_id',
+  foreignField: 'productId',
+  justOne: false,
+});
+
+ProductSchema.virtual('variants', {
+  ref: 'ProductVariant',
+  localField: '_id',
+  foreignField: 'productId',
+  justOne: false,
+});
+
+// Ensure virtuals are included when serializing
+ProductSchema.set('toJSON', { virtuals: true });
+ProductSchema.set('toObject', { virtuals: true });

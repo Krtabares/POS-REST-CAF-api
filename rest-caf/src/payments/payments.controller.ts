@@ -6,11 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -33,9 +35,14 @@ export class PaymentsController {
 
   @Get()
   @ApiOperation({ summary: 'Listar pagos' })
+  @ApiQuery({
+    name: 'orderId',
+    required: false,
+    description: 'Filtrar por ID de orden',
+  })
   @ApiResponse({ status: 200, description: 'Lista de pagos' })
-  findAll() {
-    return this.paymentsService.findAll();
+  findAll(@Query('orderId') orderId?: string) {
+    return this.paymentsService.findAll({ orderId });
   }
 
   @Get(':id')

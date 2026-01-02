@@ -17,12 +17,19 @@ export class OrdersService {
     return doc.save();
   }
 
-  async findAll(): Promise<Order[]> {
-    return this.orderModel.find().lean();
+  async findAll(filter?: { orderId?: string }): Promise<Order[]> {
+    const query: Record<string, any> = {};
+    if (filter?.orderId) {
+      query._id = filter.orderId;
+    }
+    return this.orderModel.find(query).populate('branchId').lean();
   }
 
   async findOne(id: string): Promise<Order> {
-    const order = await this.orderModel.findById(id).lean();
+    const order = await this.orderModel
+      .findById(id)
+      .populate('branchId')
+      .lean();
     if (!order) throw new NotFoundException('Order not found');
     return order as unknown as Order;
   }

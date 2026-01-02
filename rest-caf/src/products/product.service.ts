@@ -18,11 +18,24 @@ export class ProductService {
   }
 
   async findAll(): Promise<Product[]> {
-    return this.productModel.find().lean();
+    const query = this.productModel
+      .find()
+      .populate('categoryId')
+      .populate('branchId')
+      .populate('extras')
+      .populate('variants');
+    const result = await query.exec();
+    return result as unknown as Product[];
   }
 
   async findOne(id: string): Promise<Product> {
-    const product = await this.productModel.findById(id).lean();
+    const product = await this.productModel
+      .findById(id)
+      .populate('categoryId')
+      .populate('branchId')
+      .populate('extras')
+      .populate('variants')
+      .exec();
     if (!product) throw new NotFoundException('Product not found');
     return product as unknown as Product;
   }
@@ -30,7 +43,11 @@ export class ProductService {
   async update(id: string, dto: UpdateProductDto): Promise<Product> {
     const product = await this.productModel
       .findByIdAndUpdate(id, dto, { new: true })
-      .lean();
+      .populate('categoryId')
+      .populate('branchId')
+      .populate('extras')
+      .populate('variants')
+      .exec();
     if (!product) throw new NotFoundException('Product not found');
     return product as unknown as Product;
   }
